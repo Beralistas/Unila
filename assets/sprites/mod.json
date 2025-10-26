@@ -7,5 +7,6 @@
     "version": "1.0",
     "minGameVersion": "147",
     "java": true,
-    "dependencies": ["mindustry"]
+    "dependencies": [],
+    "hidden": true
 }

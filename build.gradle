@@ -12,6 +12,8 @@ repositories {
 dependencies {
     compileOnly "com.github.Anuken.Arc:arc-core:v147"
     compileOnly "com.github.Anuken.Mindustry:core:v147"
+    annotationProcessor "com.github.Anuken:jabel:0.9.0"
+    annotationProcessor "com.github.Anuken.Mindustry:core:v147"
 }
 
 tasks.withType(JavaCompile) {
@@ -21,5 +23,15 @@ tasks.withType(JavaCompile) {
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(16)
+    }
+}
+
+task jarAndroid {
+    dependsOn "jar"
+}
+
+processResources {
+    from("assets/") {
+        include "**"
     }
 }
