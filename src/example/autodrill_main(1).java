@@ -105,35 +105,52 @@ public class AutoDrill extends Mod {
         ui.hudGroup.fill(cont -> {
             cont.name = "autodrill-toggle";
             cont.bottom().right();
-            toggleButton = cont.button("AutoDrill", Styles.togglet, this::toggleMod)
-                .size(120f, 45f)
+            
+            // Main toggle button with icon
+            toggleButton = cont.button(b -> {
+                b.image(Icon.production).size(24f).padRight(6f).update(i -> {
+                    i.setColor(enabled ? Color.green : Color.gray);
+                });
+                b.add("AutoDrill");
+            }, Styles.togglet, this::toggleMod)
+                .size(130f, 48f)
                 .margin(8f)
                 .padRight(10f)
                 .padBottom(60f)
                 .update(b -> b.setChecked(enabled))
+                .tooltip("Toggle AutoDrill (Hotkey: " + toggleKey + ")")
                 .get();
             
-            // Add settings button
-            cont.button(Icon.settings, Styles.clearTransi, () -> {
+            // Settings button with icon
+            cont.button(b -> {
+                b.image(Icon.settings).size(28f);
+            }, Styles.clearTransi, () -> {
                 settingsDialog.show();
-            }).size(40f).padRight(140f).padBottom(60f);
+            }).size(48f).padRight(150f).padBottom(60f).tooltip("Open AutoDrill Settings");
         });
     }
     
     private void createSettingsDialog() {
-        settingsDialog = new BaseDialog("AutoDrill Settings");
+        settingsDialog = new BaseDialog("@settings.title");
         settingsDialog.cont.pane(t -> {
-            t.defaults().size(400f, 60f).pad(4f);
+            t.defaults().size(420f, 60f).pad(4f);
             
             // === BASIC SETTINGS ===
-            t.add("[accent]Basic Settings[]").left().row();
-            t.image().color(Color.accent).fillX().height(2f).pad(4f).row();
+            t.table(header -> {
+                header.image(Icon.settings).size(32f).padRight(8f);
+                header.add("[accent]Basic Settings[]").left();
+            }).left().padBottom(8f).row();
+            t.image().color(Color.accent).fillX().height(3f).pad(4f).row();
             
             // Toggle Key
             t.table(key -> {
                 key.left();
-                key.add("Activation Key: ").left();
-                key.button(toggleKey.toString(), Styles.flatTogglet, () -> {
+                key.image(Icon.add).size(24f).padRight(8f);
+                key.add("Activation Key: ").left().padRight(8f);
+                key.button(b -> {
+                    b.image(Icon.pencil).size(20f).padRight(4f);
+                    b.add(toggleKey.toString());
+                }, Styles.flatTogglet, () -> {
                     ui.showTextInput("Set Activation Key", "Enter key name (e.g., h, k, etc.)", 10, toggleKey.toString(), text -> {
                         try {
                             toggleKey = KeyCode.byName(text.toLowerCase());
@@ -143,89 +160,122 @@ public class AutoDrill extends Mod {
                             ui.showInfoToast("Invalid key name!", 2f);
                         }
                     });
-                }).width(100f);
-            }).row();
+                }).width(120f);
+            }).left().row();
             
             // Display Toggle Button
-            t.check("Display Toggle Button", displayToggleButton, v -> {
-                displayToggleButton = v;
-                saveSettings();
-                ui.showInfoToast("Restart required to apply", 2f);
+            t.table(btn -> {
+                btn.left();
+                btn.image(Icon.eye).size(24f).padRight(8f);
+                btn.check("Display Toggle Button", displayToggleButton, v -> {
+                    displayToggleButton = v;
+                    saveSettings();
+                    ui.showInfoToast("Restart required to apply", 2f);
+                }).left();
             }).left().padTop(10f).row();
             
             // Max Tiles Slider
             t.table(max -> {
                 max.left();
-                max.add("Max Tiles: ").left();
-                Label maxLabel = max.add(maxTiles + "").width(60f).left().get();
+                max.image(Icon.zoom).size(24f).padRight(8f);
+                max.add("Max Tiles: ").left().padRight(8f);
+                Label maxLabel = max.add(maxTiles + "").width(60f).left().color(Color.accent).get();
                 max.row();
+                max.add().width(32f); // Spacer for icon
                 max.slider(100, 5000, 100, maxTiles, v -> {
                     maxTiles = (int)v;
                     maxLabel.setText((int)v + "");
                     saveSettings();
-                }).width(300f).padTop(4f);
-            }).row();
+                }).width(320f).padTop(4f);
+            }).left().row();
             
             // Minimum Ores Slider
             t.table(min -> {
                 min.left();
-                min.add("Minimum Ores per Drill: ").left();
-                Label minLabel = min.add(minOres + "").width(60f).left().get();
+                min.image(Icon.units).size(24f).padRight(8f);
+                min.add("Min Ores per Drill: ").left().padRight(8f);
+                Label minLabel = min.add(minOres + "").width(60f).left().color(Color.accent).get();
                 min.row();
+                min.add().width(32f); // Spacer
                 min.slider(1, 10, 1, minOres, v -> {
                     minOres = (int)v;
                     minLabel.setText((int)v + "");
                     saveSettings();
-                }).width(300f).padTop(4f);
-            }).row();
+                }).width(320f).padTop(4f);
+            }).left().row();
             
             // Optimization Quality Slider
             t.table(opt -> {
                 opt.left();
-                opt.add("Optimization Quality: ").left();
-                Label optLabel = opt.add(optimizationQuality + "").width(60f).left().get();
+                opt.image(Icon.effect).size(24f).padRight(8f);
+                opt.add("Optimization Quality: ").left().padRight(8f);
+                Label optLabel = opt.add(optimizationQuality + "").width(60f).left().color(Color.accent).get();
                 opt.row();
+                opt.add().width(32f); // Spacer
                 opt.slider(1, 10, 1, optimizationQuality, v -> {
                     optimizationQuality = (int)v;
                     optLabel.setText((int)v + "");
                     saveSettings();
-                }).width(300f).padTop(4f);
-            }).row();
+                }).width(320f).padTop(4f);
+            }).left().row();
             
             // Place Water Extractors
-            t.check("Place Water Extractors", placeWaterExtractors, v -> {
-                placeWaterExtractors = v;
-                saveSettings();
+            t.table(water -> {
+                water.left();
+                water.image(Icon.liquid).size(24f).padRight(8f);
+                water.check("Place Water Extractors", placeWaterExtractors, v -> {
+                    placeWaterExtractors = v;
+                    saveSettings();
+                }).left();
             }).left().padTop(10f).row();
             
             // Place Power Nodes
-            t.check("Place Power Nodes", placePowerNodes, v -> {
-                placePowerNodes = v;
-                saveSettings();
+            t.table(power -> {
+                power.left();
+                power.image(Icon.power).size(24f).padRight(8f);
+                power.check("Place Power Nodes", placePowerNodes, v -> {
+                    placePowerNodes = v;
+                    saveSettings();
+                }).left();
             }).left().row();
             
             // Use Pipe Input
-            t.check("Use Pipe Input (Centralized Water)", usePipeInput, v -> {
-                usePipeInput = v;
-                saveSettings();
+            t.table(pipe -> {
+                pipe.left();
+                pipe.image(Icon.distribution).size(24f).padRight(8f);
+                pipe.check("Use Pipe Input (Centralized)", usePipeInput, v -> {
+                    usePipeInput = v;
+                    saveSettings();
+                }).left();
             }).left().row();
             
             // === AUTO-SCAN SETTINGS ===
             t.add("").row(); // Spacer
-            t.add("[accent]Auto-Scan Settings[]").left().padTop(20f).row();
-            t.image().color(Color.accent).fillX().height(2f).pad(4f).row();
+            t.table(scanHeader -> {
+                scanHeader.image(Icon.upload).size(32f).padRight(8f);
+                scanHeader.add("[accent]Auto-Scan Settings[]").left();
+            }).left().padTop(20f).row();
+            t.image().color(Color.accent).fillX().height(3f).pad(4f).row();
             
             // Enable Auto-Scan
-            t.check("Enable Auto-Scan Mode", autoScanEnabled, v -> {
-                autoScanEnabled = v;
-                saveSettings();
-            }).left().padTop(10f).tooltip("Automatically scans and places drills around player").row();
+            t.table(enableScan -> {
+                enableScan.left();
+                enableScan.image(Icon.waves).size(24f).padRight(8f);
+                enableScan.check("Enable Auto-Scan Mode", autoScanEnabled, v -> {
+                    autoScanEnabled = v;
+                    saveSettings();
+                }).left().tooltip("Automatically scan and place drills around player");
+            }).left().padTop(10f).row();
             
             // Auto-Scan Key
             t.table(scanKey -> {
                 scanKey.left();
-                scanKey.add("Auto-Scan Key: ").left();
-                scanKey.button(autoScanKey.toString(), Styles.flatTogglet, () -> {
+                scanKey.image(Icon.play).size(24f).padRight(8f);
+                scanKey.add("Auto-Scan Key: ").left().padRight(8f);
+                scanKey.button(b -> {
+                    b.image(Icon.pencil).size(20f).padRight(4f);
+                    b.add(autoScanKey.toString());
+                }, Styles.flatTogglet, () -> {
                     ui.showTextInput("Set Auto-Scan Key", "Enter key name (e.g., j, k, etc.)", 10, autoScanKey.toString(), text -> {
                         try {
                             autoScanKey = KeyCode.byName(text.toLowerCase());
@@ -235,43 +285,54 @@ public class AutoDrill extends Mod {
                             ui.showInfoToast("Invalid key name!", 2f);
                         }
                     });
-                }).width(100f);
-            }).row();
+                }).width(120f);
+            }).left().row();
             
             // Scan Radius Slider
             t.table(radius -> {
                 radius.left();
-                radius.add("Scan Radius: ").left();
-                Label radiusLabel = radius.add(autoScanRadius + " tiles").width(80f).left().get();
+                radius.image(Icon.rotate).size(24f).padRight(8f);
+                radius.add("Scan Radius: ").left().padRight(8f);
+                Label radiusLabel = radius.add(autoScanRadius + " tiles").width(90f).left().color(Color.accent).get();
                 radius.row();
+                radius.add().width(32f); // Spacer
                 radius.slider(5, 50, 1, autoScanRadius, v -> {
                     autoScanRadius = (int)v;
                     radiusLabel.setText((int)v + " tiles");
                     saveSettings();
-                }).width(300f).padTop(4f);
-            }).row();
+                }).width(320f).padTop(4f);
+            }).left().row();
             
             // Drill Tier Selection
             t.table(tier -> {
                 tier.left();
-                tier.add("Drill Tier: ").left();
+                tier.image(Icon.production).size(24f).padRight(8f);
+                tier.add("Drill Tier: ").left().padRight(8f);
                 String[] drillNames = {"Mechanical", "Pneumatic", "Laser", "Blast"};
-                Label tierLabel = tier.add(drillNames[autoScanDrillTier]).width(100f).left().get();
+                Label tierLabel = tier.add(drillNames[autoScanDrillTier]).width(110f).left().color(Color.orange).get();
                 tier.row();
+                tier.add().width(32f); // Spacer
                 tier.slider(0, 3, 1, autoScanDrillTier, v -> {
                     autoScanDrillTier = (int)v;
                     tierLabel.setText(drillNames[(int)v]);
                     saveSettings();
-                }).width(300f).padTop(4f);
-            }).row();
+                }).width(320f).padTop(4f);
+            }).left().row();
             
-            // Info label
-            t.add("[lightgray]Press " + autoScanKey + " to scan & place drills[]").left().padTop(10f).scale(0.85f).row();
+            // Info label with icon
+            t.table(info -> {
+                info.left();
+                info.image(Icon.info).size(20f).padRight(8f).color(Color.lightGray);
+                info.add("[lightgray]Press " + autoScanKey + " to scan & place drills[]").left().scale(0.85f);
+            }).left().padTop(10f).row();
             
         }).grow();
         
         settingsDialog.addCloseButton();
-        settingsDialog.buttons.button("Reset to Default", Icon.refresh, () -> {
+        settingsDialog.buttons.button(b -> {
+            b.image(Icon.refresh).size(24f).padRight(6f);
+            b.add("Reset to Default");
+        }, () -> {
             resetToDefaults();
             settingsDialog.hide();
             Time.runTask(5f, () -> settingsDialog.show());
@@ -309,11 +370,11 @@ public class AutoDrill extends Mod {
         
         // Create drill selection UI
         drillDialog = new Table(Tex.buttonEdge3);
-        drillDialog.margin(6f);
+        drillDialog.margin(8f);
         
         Vec2 mousePos = Core.input.mouse();
-        drillDialog.setPosition(Mathf.clamp(mousePos.x + 10f, 0, Core.graphics.getWidth() - 200), 
-                               Mathf.clamp(mousePos.y - 10f, 0, Core.graphics.getHeight() - 300));
+        drillDialog.setPosition(Mathf.clamp(mousePos.x + 10f, 0, Core.graphics.getWidth() - 220), 
+                               Mathf.clamp(mousePos.y - 10f, 0, Core.graphics.getHeight() - 350));
         
         drillDialog.update(() -> {
             if(Core.input.keyTap(KeyCode.mouseLeft) || Core.input.keyTap(KeyCode.mouseRight) || Core.input.keyTap(KeyCode.escape)) {
@@ -322,12 +383,18 @@ public class AutoDrill extends Mod {
             }
         });
         
+        // Header with icon
+        drillDialog.table(header -> {
+            header.image(Icon.production).size(28f).padRight(8f).color(Color.accent);
+            header.add("[accent]Select Drill Type[]").center();
+        }).fillX().pad(6f).row();
+        
+        drillDialog.image().color(Color.accent).fillX().height(3f).pad(4f).row();
+        
+        // Drill buttons grid
         drillDialog.table(t -> {
-            t.add("[accent]Select Drill Type[]").colspan(2).center().pad(4f).row();
-            t.image().color(Color.accent).fillX().height(3f).colspan(2).pad(4f).row();
-            t.defaults().size(180f, 55f).pad(3f);
+            t.defaults().size(190f, 58f).pad(3f);
             
-            // Add drill buttons with icons
             addDrillButton(t, Blocks.mechanicalDrill, ore);
             addDrillButton(t, Blocks.pneumaticDrill, ore);
             t.row();
@@ -335,23 +402,50 @@ public class AutoDrill extends Mod {
             addDrillButton(t, Blocks.blastDrill, ore);
         }).row();
         
-        // Info display
+        // Info display with icons
+        drillDialog.image().color(Color.gray).fillX().height(2f).pad(4f).row();
         drillDialog.table(info -> {
-            info.image().color(Color.accent).fillX().height(2f).pad(4f).row();
-            info.add("[lightgray]Ore Patch: " + floodTiles.size + " tiles[]").left().pad(4f).row();
-            info.add("[lightgray]Ore Type: " + ore.localizedName + "[]").left().pad(4f);
-        }).fillX().row();
+            info.defaults().left().pad(3f);
+            
+            // Ore patch size
+            info.table(patch -> {
+                patch.image(Icon.zoom).size(18f).padRight(6f).color(Color.lightGray);
+                patch.add("[lightgray]Patch: " + floodTiles.size + " tiles[]");
+            }).left().row();
+            
+            // Ore type
+            info.table(oreInfo -> {
+                oreInfo.image(ore.uiIcon).size(18f).padRight(6f);
+                oreInfo.add("[lightgray]Ore: " + ore.localizedName + "[]");
+            }).left();
+        }).fillX().padTop(4f).row();
         
-        // Quick options
+        // Divider
+        drillDialog.image().color(Color.gray).fillX().height(2f).pad(4f).row();
+        
+        // Quick options with icons
         drillDialog.table(opt -> {
-            opt.defaults().left().pad(2f);
-            opt.check("Water", placeWaterExtractors, v -> placeWaterExtractors = v)
-                .tooltip("Place water extractors near drills");
-            opt.check("Power", placePowerNodes, v -> placePowerNodes = v)
-                .tooltip("Place power nodes near drills");
+            opt.defaults().left().pad(3f);
+            
+            opt.table(water -> {
+                water.image(Icon.liquid).size(20f).padRight(4f).color(placeWaterExtractors ? Color.cyan : Color.gray);
+                water.check("Water", placeWaterExtractors, v -> placeWaterExtractors = v)
+                    .tooltip("Place water extractors near drills");
+            }).left();
+            
+            opt.table(power -> {
+                power.image(Icon.power).size(20f).padRight(4f).color(placePowerNodes ? Color.yellow : Color.gray);
+                power.check("Power", placePowerNodes, v -> placePowerNodes = v)
+                    .tooltip("Place power nodes near drills");
+            }).left();
+            
             opt.row();
-            opt.check("Pipe Mode", usePipeInput, v -> usePipeInput = v)
-                .tooltip("Use centralized water with pipes").colspan(2);
+            
+            opt.table(pipe -> {
+                pipe.image(Icon.distribution).size(20f).padRight(4f).color(usePipeInput ? Color.royal : Color.gray);
+                pipe.check("Pipe Mode", usePipeInput, v -> usePipeInput = v)
+                    .tooltip("Use centralized water with pipes");
+            }).left().colspan(2);
         }).fillX().padTop(6f);
         
         Core.scene.add(drillDialog);
