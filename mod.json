@@ -7,6 +7,5 @@
   "minGameVersion": "147",
   "dependencies": [],
   "hidden": false,
-  "main": "UnilaMod.main",
   "java": true
 }
