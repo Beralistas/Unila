@@ -1,11 +1,10 @@
 {
-    "name": "Unila",
-    "displayName": "Unila Mod",
-    "author": "YourName",
-    "main": "unila.Main",
-    "description": "Your mod description",
-    "version": "1.0",
-    "minGameVersion": "146",
-    "java": true,
-    "dependencies": ["mindustry"]
+  "name": "unila-mod",
+  "displayName": "Unila Mod",
+  "author": "Beralistas",
+  "description": "Just a mod",
+  "version": "1.0",
+  "minGameVersion": "147",
+  "dependencies": [],
+  "hidden": false
 }
