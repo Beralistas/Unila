@@ -10,8 +10,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly "com.github.Anuken.Arc:arc-core:v146"
-    compileOnly "com.github.Anuken.Mindustry:core:v146"
+    compileOnly "com.github.Anuken.Arc:arc-core:v147"
+    compileOnly "com.github.Anuken.Mindustry:core:v147"
 }
 
 tasks.withType(JavaCompile) {

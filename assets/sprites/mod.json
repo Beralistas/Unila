@@ -1,0 +1,11 @@
+{
+    "name": "Unila",
+    "displayName": "Unila Mod",
+    "author": "YourName",
+    "main": "unila.Main",
+    "description": "Your mod description",
+    "version": "1.0",
+    "minGameVersion": "147",
+    "java": true,
+    "dependencies": ["mindustry"]
+}
