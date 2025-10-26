@@ -1,10 +1,10 @@
 {
   "name": "unila-mod",
-  "displayName": "Unila Mod",
+  "displayName": "Unila AutoDrill",
   "author": "Beralistas",
-  "description": "A working Mindustry v8 mod with settings",
+  "description": "Auto-place drills on ore patches",
   "version": "1.0",
-  "minGameVersion": "146",
+  "minGameVersion": "147",
   "dependencies": [],
   "hidden": false,
   "main": "unila.UnilaMod",
