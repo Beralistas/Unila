@@ -1,11 +1,10 @@
 {
-  "name": "unila-mod",
+  "name": "Unila",
   "displayName": "Unila AutoDrill",
   "author": "Beralistas",
   "description": "Auto-place drills on ore patches",
   "version": "1.0",
   "minGameVersion": "147",
-  "dependencies": [],
   "hidden": false,
   "java": true
 }
