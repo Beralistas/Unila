@@ -23,7 +23,7 @@ import mindustry.world.blocks.production.*;
 import static mindustry.Vars.*;
 
 public class UnilaMod extends Mod {
-    public static boolean enabled = false;
+    public static boolean enabled = true;
     public static KeyCode toggleKey = KeyCode.h;
     public static KeyCode autoScanKey = KeyCode.j;
     public static int maxTiles = 1000;
